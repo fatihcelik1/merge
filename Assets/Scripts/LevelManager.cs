@@ -49,7 +49,7 @@ public class LevelManager : MonoBehaviour
 
     int GetTargetForLevel(int level)
     {
-        // Kademeli artan hedef: Level 1 = 150, Level 50 = 100000
+        // Progressively increasing target: Level 1 = 150, Level 50 = 100000
         return Mathf.RoundToInt(100 * Mathf.Pow(1.15f, level - 1)) + 50;
     }
 
@@ -73,7 +73,7 @@ public class LevelManager : MonoBehaviour
     void UpdateUI()
     {
         if (levelText != null) levelText.text = currentLevel.ToString();
-        if (movesText != null) movesText.text = "Hamle: " + movesLeft;
+        if (movesText != null) movesText.text = "Moves: " + movesLeft;
         if (targetText != null)
         {
             int current = Mathf.FloorToInt(GameManager.Instance.money) - levelStartMoney;

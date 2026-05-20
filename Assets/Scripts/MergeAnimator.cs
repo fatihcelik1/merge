@@ -18,7 +18,7 @@ public class MergeAnimator : MonoBehaviour
 
     IEnumerator MergeSequence(RectTransform from, RectTransform to, System.Action onDone)
     {
-        // 1. UÇ
+        // 1. FLY
         Vector2 startPos = from.anchoredPosition;
         Vector2 targetPos = to.anchoredPosition;
         float flyDuration = 0.28f;
