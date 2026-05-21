@@ -19,6 +19,9 @@ public class LevelManager : MonoBehaviour
     public GameObject winPanel;
     public GameObject losePanel;
 
+    public TextMeshProUGUI winRewardText;
+    public TextMeshProUGUI loseProgressText;
+
     void Awake()
     {
         Instance = this;
@@ -85,11 +88,15 @@ public class LevelManager : MonoBehaviour
     {
         PlayerPrefs.SetInt("currentLevel", currentLevel + 1);
         PlayerPrefs.Save();
+        int collected = Mathf.FloorToInt(GameManager.Instance.money) - levelStartMoney;
+        if (winRewardText != null) winRewardText.text = "+" + collected;
         if (winPanel != null) winPanel.SetActive(true);
     }
 
     void LoseLevel()
     {
+        int collected = Mathf.FloorToInt(GameManager.Instance.money) - levelStartMoney;
+        if (loseProgressText != null) loseProgressText.text = collected + " / " + targetMoney;
         if (losePanel != null) losePanel.SetActive(true);
     }
 
@@ -105,6 +112,6 @@ public class LevelManager : MonoBehaviour
 
     public void GoToMenu()
     {
-        SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene("Main Menu");
     }
 }

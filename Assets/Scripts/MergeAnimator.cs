@@ -4,11 +4,23 @@ using UnityEngine.UI;
 
 public class MergeAnimator : MonoBehaviour
 {
-    public static MergeAnimator Instance;
+    static MergeAnimator _instance;
+
+    // Sahne yeniden yuklendiginde eski referans bayatlarsa
+    // sahnedeki canli MergeAnimator'i bulup kendini onarir.
+    public static MergeAnimator Instance
+    {
+        get
+        {
+            if (_instance == null)
+                _instance = FindObjectOfType<MergeAnimator>();
+            return _instance;
+        }
+    }
 
     void Awake()
     {
-        Instance = this;
+        _instance = this;
     }
 
     public void PlayMerge(RectTransform from, RectTransform to, System.Action onDone)

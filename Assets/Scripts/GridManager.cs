@@ -15,6 +15,7 @@ public class GridManager : MonoBehaviour
     public int cols = 4;
     public float cellSize = 190f;
     public float spacing = 12f;
+    public float itemScale = 0.92f;
 
     private GameObject[,] grid;
     private GameObject[,] slots;
@@ -93,7 +94,7 @@ public class GridManager : MonoBehaviour
         RectTransform itemRt = newItem.GetComponent<RectTransform>();
         Vector2 targetPos = GetSlotPosition(r, c);
         itemRt.anchoredPosition = new Vector2(targetPos.x, targetPos.y + 800f);
-        itemRt.sizeDelta = new Vector2(cellSize, cellSize);
+        itemRt.sizeDelta = new Vector2(cellSize, cellSize) * itemScale;
 
         int randomLevel = Random.Range(1, 9);
         newItem.GetComponent<ItemData>().level = randomLevel;
