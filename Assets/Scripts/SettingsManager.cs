@@ -18,17 +18,10 @@ public class SettingsManager : MonoBehaviour
 
     void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-            return;
-        }
-
+        // SettingsManager sahneye ozel UI referanslari tutuyor (buton gorselleri),
+        // bu yuzden DontDestroyOnLoad OLMAMALI. Her sahne kendi SettingsManager'ini
+        // kullanir; ayarlar zaten PlayerPrefs uzerinden paylasiliyor.
+        Instance = this;
         LoadSettings();
     }
 

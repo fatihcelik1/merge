@@ -76,11 +76,11 @@ public class LevelManager : MonoBehaviour
     void UpdateUI()
     {
         if (levelText != null) levelText.text = currentLevel.ToString();
-        if (movesText != null) movesText.text = "Moves: " + movesLeft;
+        if (movesText != null) movesText.text = movesLeft.ToString();
         if (targetText != null)
         {
             int current = Mathf.FloorToInt(GameManager.Instance.money) - levelStartMoney;
-            targetText.text = current + " / " + targetMoney;
+            targetText.text = current + "/" + targetMoney;
         }
     }
 

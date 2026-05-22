@@ -9,7 +9,10 @@ public class GridFullPopup : MonoBehaviour
     void Awake()
     {
         Instance = this;
-        popupPanel.SetActive(false);
+        // NOT: popupPanel'i burada kapatmiyoruz. popupPanel bu objenin
+        // kendisi oldugu icin SetActive(false) Awake'i ilk acilista
+        // popup'i aninda kapatiyordu. Baslangic gizleme ShuffleManager.Start()
+        // tarafindan yapiliyor (adPopup.SetActive(false)).
     }
 
     public void ShowPopup()

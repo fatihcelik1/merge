@@ -10,10 +10,19 @@ public class ShuffleManager : MonoBehaviour
     public TextMeshProUGUI shuffleCountText;
     public GameObject adPopup;
 
+    [Header("Shuffle butonu gorunumu")]
+    public Image shuffleButtonImage;                 // bos birakilirsa otomatik bulunur
+    public Color fadedColor = new Color(0.35f, 0.35f, 0.35f, 1f);
+
     void Awake()
     {
         Instance = this;
         shuffleCount = PlayerPrefs.GetInt("shuffleCount", 0);
+        if (shuffleButtonImage == null)
+        {
+            GameObject sb = GameObject.Find("ShuffleButton");
+            if (sb != null) shuffleButtonImage = sb.GetComponent<Image>();
+        }
         UpdateUI();
     }
 
@@ -54,5 +63,9 @@ public class ShuffleManager : MonoBehaviour
     {
         if (shuffleCountText != null)
             shuffleCountText.text = "x" + shuffleCount;
+
+        // hak yoksa buton soluk, varsa normal
+        if (shuffleButtonImage != null)
+            shuffleButtonImage.color = shuffleCount > 0 ? Color.white : fadedColor;
     }
 }
