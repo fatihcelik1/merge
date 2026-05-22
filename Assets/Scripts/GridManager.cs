@@ -177,7 +177,7 @@ public class GridManager : MonoBehaviour
             toObj.GetComponent<ItemVisual>().UpdateVisual(newLevel);
             Destroy(fromObj);
             if (LevelManager.Instance != null)
-            LevelManager.Instance.OnMergeHappened(level1);
+            LevelManager.Instance.OnMergeHappened(level1, toRt);
             else
             GameManager.Instance.AddMoney(level1 * 10);
             ApplyGravity(fromC);

@@ -1,27 +1,32 @@
 # Merge Idle - Notlar
 
+## KALAN İŞLER
+- [ ] Para animasyonu — "+10" uçarak coin paneline gitsin
+- [ ] Logo tasarımı — ana menü logosu (şu an yer tutucu)
+- [ ] Level seçim ekranı — pack'te `level_select` var
+- [ ] AdMob gerçek reklam entegrasyonu (yayın öncesi)
+
+### İptal edilenler (istenmedi)
+- Pause butonu — oyunda gerek yok
+- Hayvan üstünde seviye rakamı — istenmedi
+
 ## ÇÖZÜLEMEYEN / BEKLEYEN
 
 ### Izgara - Çerçeve oturması (cosmetic)
-- **Sorun:** Hayvan ızgarası, jungle çerçevenin iç boşluğunu temiz doldurmuyor —
-  alt ve üstte boşluk kalıyor.
-- **Neden çözülemedi:** Çerçevenin iç şeffaf deliğinin gerçek piksel ölçüsü,
-  oyun render'ı görülmeden kör tahminle doğru bulunamadı. Birden çok deneme
-  tutmadı.
-- **Gerçek çözüm yolu:** Unity Editör'de Game görünümüne bakarak ELLE ayar:
-  1. Hierarchy > Canvas > GameFrame seç → Inspector'da Rect Transform
-     Width/Height ile çerçeve boyutu.
-  2. Canvas > Game Area > Grid seç → Rect Transform Width/Height (koyu panel).
-  3. Grid üzerindeki GridManager bileşeni → Cell Size değeri (ızgara hücre
-     boyutu). Cell Size değişikliği sadece Play'e basınca etkili olur.
-  4. Play → bak → düzelt → tekrar Play, oturana kadar.
-- **Mevcut durum:** Oyun oynanabilir; bu yalnızca görsel bir cilalama maddesi.
+- **Sorun:** Hayvan ızgarası, jungle çerçevenin iç boşluğunu temiz doldurmuyor.
+- **Çözüm yolu:** Unity Editör'de Game görünümüne bakarak ELLE ayar:
+  GameFrame Rect Transform W/H, Grid Rect Transform W/H, GridManager Cell Size.
+  Cell Size değişikliği Play'e basınca etkili olur.
+- **Durum:** Oyun oynanabilir; yalnızca görsel cilalama.
 
-## YAPILDI (commit bekliyor)
-- Yeni 10 hayvan (boyut sırası), şeffaf arka plan
+## YAPILDI
+- Win/Lose panelleri
+- Yeni 10 hayvan (boyut sırası, şeffaf arka plan)
 - Üst bar Moves/Target rozetleri (ikonlu)
 - Shuffle butonu: hak yokken soluk
-- Settings müzik/ses düzeltmesi (DontDestroyOnLoad kaldırıldı)
-- Ana menüye dön butonu (prew ikonu)
-- Win/Lose panelleri
-- Izgara arka planı: yeşil yerine koyu panel; çerçeve şeffaf sürüm, ön planda
+- Settings müzik/ses düzeltmesi
+- Ana menüye dön butonu
+- Izgara koyu panel + şeffaf çerçeve ön planda
+- Merge partikül efekti (yıldız patlaması)
+- İngilizce çeviri
+- Son commit: 872b92e

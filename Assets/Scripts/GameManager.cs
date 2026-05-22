@@ -7,7 +7,8 @@ using System;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-    public float money = 0f;
+    public float money = 0f;        // gercek bakiye (oyun mantigi)
+    float displayMoney = 0f;        // gosterilen bakiye (sayac)
     public TextMeshProUGUI moneyText;
 
     void Awake()
@@ -20,18 +21,35 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         InvokeRepeating("SaveGame", 10f, 10f);
+        displayMoney = money;
         UpdateMoneyUI();
     }
 
+    // anlik ekleme (gunluk odul vb.) - sayac hemen artar
     public void AddMoney(float amount)
     {
         money += amount;
+        displayMoney = money;
+        UpdateMoneyUI();
+    }
+
+    // merge: bakiye hemen artar (mantik icin), sayac coin'ler varinca artar
+    public void AddMoneyDeferred(float amount)
+    {
+        money += amount;
+    }
+
+    // ucan coin sayaca varinca cagrilir
+    public void AddDisplayMoney(float amount)
+    {
+        displayMoney += amount;
+        if (displayMoney > money) displayMoney = money;
         UpdateMoneyUI();
     }
 
     void UpdateMoneyUI()
     {
-        moneyText.text = Mathf.FloorToInt(money).ToString();
+        moneyText.text = Mathf.FloorToInt(displayMoney).ToString();
     }
 
     public void TrySpawn()
