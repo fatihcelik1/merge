@@ -91,6 +91,7 @@ public class LevelManager : MonoBehaviour
     {
         PlayerPrefs.SetInt("currentLevel", currentLevel + 1);
         PlayerPrefs.Save();
+        if (SettingsManager.Instance != null) SettingsManager.Instance.Vibrate();
         int collected = Mathf.FloorToInt(GameManager.Instance.money) - levelStartMoney;
         if (winRewardText != null) winRewardText.text = "+" + collected;
         if (winPanel != null) winPanel.SetActive(true);

@@ -6,6 +6,17 @@ public class MergeAnimator : MonoBehaviour
 {
     static MergeAnimator _instance;
 
+    AudioSource _audio;
+    static AudioClip _mergeClip;
+    static AudioClip MergeClip
+    {
+        get
+        {
+            if (_mergeClip == null) _mergeClip = Resources.Load<AudioClip>("merge_sound");
+            return _mergeClip;
+        }
+    }
+
     // Sahne yeniden yuklendiginde eski referans bayatlarsa
     // sahnedeki canli MergeAnimator'i bulup kendini onarir.
     public static MergeAnimator Instance
@@ -21,6 +32,9 @@ public class MergeAnimator : MonoBehaviour
     void Awake()
     {
         _instance = this;
+        _audio = GetComponent<AudioSource>();
+        if (_audio == null) _audio = gameObject.AddComponent<AudioSource>();
+        _audio.playOnAwake = false;
     }
 
     public void PlayMerge(RectTransform from, RectTransform to, System.Action onDone)
@@ -69,6 +83,8 @@ public class MergeAnimator : MonoBehaviour
         // 3. POP
         onDone?.Invoke();
         SpawnBurst(to);
+        bool sfxOn = SettingsManager.Instance == null || SettingsManager.Instance.soundOn;
+        if (sfxOn && _audio != null && MergeClip != null) _audio.PlayOneShot(MergeClip);
 
         float popDuration = 0.4f;
         elapsed = 0f;

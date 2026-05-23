@@ -3,9 +3,11 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections;
 
-public class ItemClick : MonoBehaviour, IPointerClickHandler
+public class ItemClick : MonoBehaviour, IPointerClickHandler,
+    IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     private static GameObject firstSelected = null;
+    private Vector2 dragStartPos;
 
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -41,6 +43,45 @@ public class ItemClick : MonoBehaviour, IPointerClickHandler
                 firstSelected = null;
             }
         }
+    }
+
+    // ---- Kaydirma (swipe) -> komsuyla merge ----
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        dragStartPos = eventData.position;
+    }
+
+    public void OnDrag(PointerEventData eventData) { }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        if (GridManager.Instance == null) return;
+        Vector2 delta = eventData.position - dragStartPos;
+        float threshold = Screen.height * 0.025f; // ~%2.5 ekran yuksekligi
+        if (delta.magnitude < threshold) return;
+
+        int[] pos = GridManager.Instance.FindItem(gameObject);
+        if (pos == null) return;
+        int r = pos[0], c = pos[1];
+        int nr = r, nc = c;
+
+        if (Mathf.Abs(delta.x) > Mathf.Abs(delta.y))
+            nc += (delta.x > 0f) ? 1 : -1;
+        else
+            nr += (delta.y > 0f) ? -1 : 1; // ekranda yukari = satir-1
+
+        if (nr < 0 || nr >= GridManager.Instance.rows ||
+            nc < 0 || nc >= GridManager.Instance.cols) return;
+
+        // mevcut tap secimini temizle ki karismasin
+        if (firstSelected != null)
+        {
+            var img = firstSelected.GetComponent<Image>();
+            if (img != null) img.color = Color.white;
+            firstSelected = null;
+        }
+
+        GridManager.Instance.MergeItems(r, c, nr, nc);
     }
 
     IEnumerator WrongMergeEffect(GameObject obj1, GameObject obj2)

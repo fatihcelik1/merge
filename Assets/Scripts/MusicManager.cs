@@ -42,9 +42,9 @@ public class MusicManager : MonoBehaviour
         return isMuted;
     }
 
-    void Start()
+    // SettingsManager tarafindan cagrilir - sadece muzigi ac/kapat
+    public void SetMusicOn(bool on)
     {
-        isMuted = PlayerPrefs.GetInt("musicMuted", 0) == 1;
-        audioSource.mute = isMuted;
+        if (audioSource != null) audioSource.mute = !on;
     }
 }

@@ -28,7 +28,7 @@ public class SettingsManager : MonoBehaviour
     void Start()
     {
         UpdateButtons();
-        ApplySettings();
+        ApplyMusic();
     }
 
     public void ToggleSound()
@@ -36,7 +36,7 @@ public class SettingsManager : MonoBehaviour
         soundOn = !soundOn;
         PlayerPrefs.SetInt("soundOn", soundOn ? 1 : 0);
         UpdateButtons();
-        ApplySettings();
+        // Sound yalnizca SFX'i etkiler; muzige dokunmaz
     }
 
     public void ToggleMusic()
@@ -44,7 +44,7 @@ public class SettingsManager : MonoBehaviour
         musicOn = !musicOn;
         PlayerPrefs.SetInt("musicOn", musicOn ? 1 : 0);
         UpdateButtons();
-        ApplySettings();
+        ApplyMusic();
     }
 
     public void ToggleVibration()
@@ -64,9 +64,17 @@ public class SettingsManager : MonoBehaviour
             vibrationButtonImage.sprite = vibrationOn ? onSprite : offSprite;
     }
 
-    void ApplySettings()
+    // Muzik tamamen bagimsiz - sadece 'musicOn'a bakar.
+    // Diger tum sesler (merge, tik, SFX) 'soundOn' ile kontrol edilir.
+    void ApplyMusic()
     {
-        AudioListener.volume = musicOn ? 1f : 0f;
+        if (MusicManager.Instance != null)
+            MusicManager.Instance.SetMusicOn(musicOn);
+    }
+
+    public bool IsSoundOn()
+    {
+        return soundOn;
     }
 
     void LoadSettings()
