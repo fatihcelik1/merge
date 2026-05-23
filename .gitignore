@@ -28,3 +28,20 @@ ExportedObj/
 *.userprefs
 /[Aa]ssets/AssetStoreTools*
 /[Aa]ssets/Plugins/Editor/JetBrains*
+
+# Editor / tooling caches
+.vscode/
+.claude/
+
+# Local-only assets
+mockups/
+*.keystore
+
+# Performance test runtime caches
+/Assets/Resources/PerformanceTestRunInfo.json
+/Assets/Resources/PerformanceTestRunInfo.json.meta
+/Assets/Resources/PerformanceTestRunSettings.json
+/Assets/Resources/PerformanceTestRunSettings.json.meta
+
+# Unity local package cache
+/Packages/com.unity_*

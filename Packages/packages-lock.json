@@ -281,6 +281,14 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.unity_82bd7a7147aaf8bf4ba4.com.unity.device-simulator": {
+      "version": "file:com.unity_82bd7a7147aaf8bf4ba4.com.unity.device-simulator",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.test-framework": "1.6.0"
+      }
+    },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",
       "depth": 0,

@@ -57,6 +57,18 @@ public class LevelManager : MonoBehaviour
         return Mathf.RoundToInt(100 * Mathf.Pow(1.15f, level - 1)) + 50;
     }
 
+    // Zorluk egrisi: kac farkli hayvan turu (level) cikabilsin?
+    // Dusuk seviye -> az cesit -> daha cok birlestirme = daha kasitli oyun.
+    public int GetSpawnMaxLevel(int level)
+    {
+        if (level <= 8)  return 3;   // tutorial / kolay
+        if (level <= 15) return 4;
+        if (level <= 22) return 5;
+        if (level <= 30) return 6;
+        if (level <= 40) return 7;
+        return 8;                    // L 41-50 zor
+    }
+
     public void OnMergeHappened(int mergeLevel, RectTransform at)
     {
         movesLeft--;
@@ -89,7 +101,11 @@ public class LevelManager : MonoBehaviour
 
     void WinLevel()
     {
-        PlayerPrefs.SetInt("currentLevel", currentLevel + 1);
+        // currentLevel'i otomatik artirma - sadece bir ust level'i kilidini ac.
+        // Tekrar oynama / sonraki level'e gecme buton bazli olur.
+        int unlocked = PlayerPrefs.GetInt("highestUnlocked", 1);
+        int newUnlocked = Mathf.Max(unlocked, currentLevel + 1);
+        PlayerPrefs.SetInt("highestUnlocked", newUnlocked);
         PlayerPrefs.Save();
         if (SettingsManager.Instance != null) SettingsManager.Instance.Vibrate();
         int collected = Mathf.FloorToInt(GameManager.Instance.money) - levelStartMoney;
@@ -106,6 +122,8 @@ public class LevelManager : MonoBehaviour
 
     public void NextLevel()
     {
+        PlayerPrefs.SetInt("currentLevel", currentLevel + 1);
+        PlayerPrefs.Save();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 

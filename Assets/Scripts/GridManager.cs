@@ -96,7 +96,10 @@ public class GridManager : MonoBehaviour
         itemRt.anchoredPosition = new Vector2(targetPos.x, targetPos.y + 800f);
         itemRt.sizeDelta = new Vector2(cellSize, cellSize) * itemScale;
 
-        int randomLevel = Random.Range(1, 9);
+        int maxLvl = (LevelManager.Instance != null)
+            ? LevelManager.Instance.GetSpawnMaxLevel(LevelManager.Instance.currentLevel)
+            : 8;
+        int randomLevel = Random.Range(1, maxLvl + 1);
         newItem.GetComponent<ItemData>().level = randomLevel;
         newItem.GetComponent<ItemVisual>().UpdateVisual(randomLevel);
         grid[r, c] = newItem;

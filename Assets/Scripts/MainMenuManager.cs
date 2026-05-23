@@ -7,6 +7,10 @@ public class MainMenuManager : MonoBehaviour
 
     public void PlayGame()
     {
+        // Bir sonraki yenilmemis level'a yonlen
+        int unlocked = PlayerPrefs.GetInt("highestUnlocked", 1);
+        PlayerPrefs.SetInt("currentLevel", unlocked);
+        PlayerPrefs.Save();
         SceneManager.LoadScene("SampleScene");
     }
 
