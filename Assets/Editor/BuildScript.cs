@@ -4,15 +4,19 @@ using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
-// Test APK olusturur, Indirilenler klasorune kaydeder.
-// Unity menusu:  Tools > APK Olustur (Indirilenler)
+// Test APK olusturur, E:\merge_build klasorune kaydeder (C: dolu).
+// Unity menusu:  Tools > APK Olustur (E: diske)
 public static class BuildScript
 {
-    const string OutPath = @"C:\Users\Fatih\Downloads\merge.apk";
+    const string OutPath = @"E:\merge_build\merge.apk";
 
-    [MenuItem("Tools/APK Olustur (Indirilenler)")]
+    [MenuItem("Tools/APK Olustur (E: diske)")]
     public static void BuildAndroid()
     {
+        // hedef klasoru garanti et
+        var dir = System.IO.Path.GetDirectoryName(OutPath);
+        if (!System.IO.Directory.Exists(dir)) System.IO.Directory.CreateDirectory(dir);
+
         string[] scenes = EditorBuildSettings.scenes
             .Where(s => s.enabled)
             .Select(s => s.path)

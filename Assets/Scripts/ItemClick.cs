@@ -81,7 +81,23 @@ public class ItemClick : MonoBehaviour, IPointerClickHandler,
             firstSelected = null;
         }
 
-        GridManager.Instance.MergeItems(r, c, nr, nc);
+        // komsuyu al, level karsilastir
+        GameObject other = GridManager.Instance.GetItemAt(nr, nc);
+        if (other == null) return;
+
+        ItemData myData = GetComponent<ItemData>();
+        ItemData otherData = other.GetComponent<ItemData>();
+        if (myData == null || otherData == null) return;
+
+        if (myData.level == otherData.level)
+        {
+            GridManager.Instance.MergeItems(r, c, nr, nc);
+        }
+        else
+        {
+            // tiklamayla ayni "yanlis merge" efekti
+            StartCoroutine(WrongMergeEffect(gameObject, other));
+        }
     }
 
     IEnumerator WrongMergeEffect(GameObject obj1, GameObject obj2)

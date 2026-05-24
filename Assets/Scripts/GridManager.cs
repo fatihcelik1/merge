@@ -84,7 +84,7 @@ public class GridManager : MonoBehaviour
             int r = allSlots[i][0];
             int c = allSlots[i][1];
             SpawnItemAt(r, c);
-            yield return new WaitForSeconds(0.08f);
+            yield return new WaitForSeconds(0.03f);
         }
     }
 
@@ -109,7 +109,7 @@ public class GridManager : MonoBehaviour
 
     IEnumerator DropAnimation(RectTransform rt, Vector2 targetPos)
     {
-        float duration = 0.35f;
+        float duration = 0.17f;
         float elapsed = 0f;
         Vector2 startPos = rt.anchoredPosition;
 
@@ -214,6 +214,12 @@ public class GridManager : MonoBehaviour
                 SpawnItemAt(r, col);
             }
         }
+    }
+
+    public GameObject GetItemAt(int r, int c)
+    {
+        if (r < 0 || r >= rows || c < 0 || c >= cols) return null;
+        return grid[r, c];
     }
 
     public int[] FindItem(GameObject item)

@@ -45,3 +45,12 @@ mockups/
 
 # Unity local package cache
 /Packages/com.unity_*
+
+# Unity scene recovery + image backups
+/Assets/_Recovery/
+*.original.png
+*.original.png.meta
+
+# Build outputs
+/merge_build/
+*.apk

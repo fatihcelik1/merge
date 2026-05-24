@@ -47,7 +47,7 @@ public class MergeAnimator : MonoBehaviour
         // 1. FLY
         Vector2 startPos = from.anchoredPosition;
         Vector2 targetPos = to.anchoredPosition;
-        float flyDuration = 0.28f;
+        float flyDuration = 0.14f;
         float elapsed = 0f;
 
         while (elapsed < flyDuration)
@@ -65,7 +65,7 @@ public class MergeAnimator : MonoBehaviour
         from.gameObject.SetActive(false);
 
         // 2. SHAKE
-        float shakeDuration = 0.2f;
+        float shakeDuration = 0.1f;
         elapsed = 0f;
         Vector2 toStart = to.anchoredPosition;
 
@@ -86,7 +86,7 @@ public class MergeAnimator : MonoBehaviour
         bool sfxOn = SettingsManager.Instance == null || SettingsManager.Instance.soundOn;
         if (sfxOn && _audio != null && MergeClip != null) _audio.PlayOneShot(MergeClip);
 
-        float popDuration = 0.4f;
+        float popDuration = 0.2f;
         elapsed = 0f;
 
         while (elapsed < popDuration)
