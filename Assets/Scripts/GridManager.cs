@@ -99,12 +99,56 @@ public class GridManager : MonoBehaviour
         int maxLvl = (LevelManager.Instance != null)
             ? LevelManager.Instance.GetSpawnMaxLevel(LevelManager.Instance.currentLevel)
             : 8;
-        int randomLevel = Random.Range(1, maxLvl + 1);
+
+        // Agirlikli random + komsu tekrarini azaltmak icin 5 deneme
+        int randomLevel = RollWeightedLevel(maxLvl);
+        for (int t = 0; t < 5 && HasSameNeighbor(r, c, randomLevel); t++)
+            randomLevel = RollWeightedLevel(maxLvl);
+
         newItem.GetComponent<ItemData>().level = randomLevel;
         newItem.GetComponent<ItemVisual>().UpdateVisual(randomLevel);
         grid[r, c] = newItem;
 
         StartCoroutine(DropAnimation(itemRt, targetPos));
+    }
+
+    // Dusuk leveller cok daha sik gelsin (weight = (maxLvl-level+1)^2).
+    // Orn. maxLvl=4 ise Lv1=%53, Lv2=%30, Lv3=%13, Lv4=%3.
+    int RollWeightedLevel(int maxLvl)
+    {
+        int total = 0;
+        for (int i = 1; i <= maxLvl; i++)
+        {
+            int w = (maxLvl - i + 1);
+            total += w * w;
+        }
+        int roll = Random.Range(0, total);
+        int acc = 0;
+        for (int i = 1; i <= maxLvl; i++)
+        {
+            int w = (maxLvl - i + 1);
+            acc += w * w;
+            if (roll < acc) return i;
+        }
+        return 1;
+    }
+
+    // 4 komsudan (yukari/asagi/sol/sag) herhangi biri ayni level mi?
+    bool HasSameNeighbor(int r, int c, int level)
+    {
+        return IsLevelAt(r - 1, c, level)
+            || IsLevelAt(r + 1, c, level)
+            || IsLevelAt(r, c - 1, level)
+            || IsLevelAt(r, c + 1, level);
+    }
+
+    bool IsLevelAt(int r, int c, int level)
+    {
+        if (r < 0 || r >= rows || c < 0 || c >= cols) return false;
+        var go = grid[r, c];
+        if (go == null) return false;
+        var data = go.GetComponent<ItemData>();
+        return data != null && data.level == level;
     }
 
     IEnumerator DropAnimation(RectTransform rt, Vector2 targetPos)

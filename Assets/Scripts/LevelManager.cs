@@ -47,26 +47,26 @@ public class LevelManager : MonoBehaviour
 
     int GetMovesForLevel(int level)
     {
-        int moves = 25 - ((level - 1) / 5);
-        return Mathf.Max(moves, 10);
+        int moves = 18 - ((level - 1) / 4);
+        return Mathf.Max(moves, 11);
     }
 
     int GetTargetForLevel(int level)
     {
-        // Progressively increasing target: Level 1 = 150, Level 50 = 100000
-        return Mathf.RoundToInt(100 * Mathf.Pow(1.15f, level - 1)) + 50;
+        // Lv1 = 250, Lv10 = 859, Lv20 = 3530, Lv50 = 234583
+        return Mathf.RoundToInt(200 * Mathf.Pow(1.15f, level - 1)) + 50;
     }
 
     // Zorluk egrisi: kac farkli hayvan turu (level) cikabilsin?
-    // Dusuk seviye -> az cesit -> daha cok birlestirme = daha kasitli oyun.
+    // Hayvanlari erken tanit, ilgiyi cek. Hippo+Elephant sadece merge ile.
     public int GetSpawnMaxLevel(int level)
     {
-        if (level <= 8)  return 3;   // tutorial / kolay
-        if (level <= 15) return 4;
-        if (level <= 22) return 5;
-        if (level <= 30) return 6;
-        if (level <= 40) return 7;
-        return 8;                    // L 41-50 zor
+        if (level <= 3)  return 3;   // Mouse, Rabbit, Cat
+        if (level <= 6)  return 4;   // + Monkey
+        if (level <= 9)  return 5;   // + Dog
+        if (level <= 11) return 6;   // + Panda
+        if (level <= 15) return 7;   // + Lion
+        return 8;                    // + Giraffe
     }
 
     public void OnMergeHappened(int mergeLevel, RectTransform at)
