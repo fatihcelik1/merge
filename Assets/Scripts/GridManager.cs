@@ -20,6 +20,7 @@ public class GridManager : MonoBehaviour
     private GameObject[,] grid;
     private GameObject[,] slots;
     private Vector2 gridStartPos;
+    private bool _isInitialSpawn = false;
 
     void Awake()
     {
@@ -63,6 +64,8 @@ public class GridManager : MonoBehaviour
 
     IEnumerator SpawnInitialItems()
     {
+        _isInitialSpawn = true;
+
         int totalSlots = rows * cols;
         int fillCount = totalSlots;
 
@@ -86,6 +89,8 @@ public class GridManager : MonoBehaviour
             SpawnItemAt(r, c);
             yield return new WaitForSeconds(0.03f);
         }
+
+        _isInitialSpawn = false;
     }
 
     void SpawnItemAt(int r, int c)
@@ -110,6 +115,26 @@ public class GridManager : MonoBehaviour
         grid[r, c] = newItem;
 
         StartCoroutine(DropAnimation(itemRt, targetPos));
+        TryShowNewFriend(randomLevel, newItem.transform, 0.7f);
+    }
+
+    // Belli bir level ilk kez goruluyorsa "NEW FRIEND" kutlamasi tetikler.
+    // Initial spawn'da (oyun ilk acilis) seen olarak isaretle ama gosterme.
+    void TryShowNewFriend(int level, Transform target, float delay)
+    {
+        string key = "seenLevel_" + level;
+        if (PlayerPrefs.GetInt(key, 0) != 0) return;
+        PlayerPrefs.SetInt(key, 1);
+        PlayerPrefs.Save();
+        if (_isInitialSpawn) return;
+        StartCoroutine(DelayedNewFriend(level, target, delay));
+    }
+
+    IEnumerator DelayedNewFriend(int level, Transform target, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (target != null && NewFriendCelebration.Instance != null)
+            NewFriendCelebration.Instance.Show(level, target);
     }
 
     // Dusuk leveller cok daha sik gelsin (weight = (maxLvl-level+1)^2).
@@ -223,6 +248,7 @@ public class GridManager : MonoBehaviour
             toObj.GetComponent<ItemData>().level = newLevel;
             toObj.GetComponent<ItemVisual>().UpdateVisual(newLevel);
             Destroy(fromObj);
+            TryShowNewFriend(newLevel, toObj.transform, 0.2f);
             if (LevelManager.Instance != null)
             LevelManager.Instance.OnMergeHappened(level1, toRt);
             else
