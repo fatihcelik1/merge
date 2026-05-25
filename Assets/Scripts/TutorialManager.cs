@@ -38,7 +38,8 @@ public class TutorialManager : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name == "Main Menu") return;
+        // Sadece oyun (gameplay) sahnesinde tetiklenmeli, Splash veya Main Menu'de degil
+        if (scene.name == "Main Menu" || scene.name == "Splash") return;
         if (PlayerPrefs.GetInt("tutorialDone", 0) != 0) return;
         StartCoroutine(StartTutorialDelayed());
     }
@@ -72,7 +73,7 @@ public class TutorialManager : MonoBehaviour
                 t2 = pair[1].transform;
             }
         }
-        if (t1 == null || t2 == null) { Finish(); return; }
+        if (t1 == null || t2 == null) { isShowing = false; return; } // hayvan yok = sahne uygun degil, flag set etme
 
         // Ana root canvas bul
         Canvas canvas = t1.GetComponentInParent<Canvas>();
@@ -82,7 +83,7 @@ public class TutorialManager : MonoBehaviour
             foreach (var c in FindObjectsOfType<Canvas>())
                 if (c.isRootCanvas) { canvas = c; break; }
         }
-        if (canvas == null) { Finish(); return; }
+        if (canvas == null) { isShowing = false; return; } // canvas yok = sahne uygun degil, flag set etme
 
         var canvasRt = (RectTransform)canvas.transform;
         Vector2 canvasSize = canvasRt.rect.size;
