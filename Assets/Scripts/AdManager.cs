@@ -66,10 +66,28 @@ public class AdManager : MonoBehaviour
         });
     }
 
-    public void ShowInterstitial()
+    public void ShowInterstitial(Action onClosed = null)
     {
-        if (interstitial != null && interstitial.CanShowAd()) interstitial.Show();
-        else { Debug.LogWarning("[AdManager] Interstitial hazir degil"); LoadInterstitial(); }
+        if (interstitial != null && interstitial.CanShowAd())
+        {
+            if (onClosed != null)
+            {
+                Action wrapper = null;
+                wrapper = () =>
+                {
+                    interstitial.OnAdFullScreenContentClosed -= wrapper;
+                    onClosed.Invoke();
+                };
+                interstitial.OnAdFullScreenContentClosed += wrapper;
+            }
+            interstitial.Show();
+        }
+        else
+        {
+            Debug.LogWarning("[AdManager] Interstitial hazir degil");
+            LoadInterstitial();
+            onClosed?.Invoke(); // reklam yok -> hemen devam et
+        }
     }
 
     // ============ REWARDED ============

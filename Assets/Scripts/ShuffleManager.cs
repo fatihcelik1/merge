@@ -48,10 +48,25 @@ public class ShuffleManager : MonoBehaviour
 
     public void OnWatchAdClicked()
     {
-        shuffleCount++;
-        PlayerPrefs.SetInt("shuffleCount", shuffleCount);
-        UpdateUI();
-        if (adPopup != null) adPopup.SetActive(false);
+        if (AdManager.Instance != null)
+        {
+            // rewarded reklam goster - sadece izlerse +1 shuffle
+            AdManager.Instance.ShowRewarded(() =>
+            {
+                shuffleCount++;
+                PlayerPrefs.SetInt("shuffleCount", shuffleCount);
+                UpdateUI();
+                if (adPopup != null) adPopup.SetActive(false);
+            });
+        }
+        else
+        {
+            // AdManager yoksa eskisi gibi direkt ver (editor / fallback)
+            shuffleCount++;
+            PlayerPrefs.SetInt("shuffleCount", shuffleCount);
+            UpdateUI();
+            if (adPopup != null) adPopup.SetActive(false);
+        }
     }
 
     public void ClosePopup()

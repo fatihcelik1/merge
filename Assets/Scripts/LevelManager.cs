@@ -124,12 +124,31 @@ public class LevelManager : MonoBehaviour
     {
         PlayerPrefs.SetInt("currentLevel", currentLevel + 1);
         PlayerPrefs.Save();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        TryShowInterstitialThenReload();
     }
 
     public void RetryLevel()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        TryShowInterstitialThenReload();
+    }
+
+    // Her 3 level degisiminde 1 interstitial reklam gosterir, sonra sahneyi yeniden yukler.
+    void TryShowInterstitialThenReload()
+    {
+        int counter = PlayerPrefs.GetInt("intAdCounter", 0) + 1;
+        if (counter >= 3 && AdManager.Instance != null)
+        {
+            PlayerPrefs.SetInt("intAdCounter", 0);
+            PlayerPrefs.Save();
+            AdManager.Instance.ShowInterstitial(() =>
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name));
+        }
+        else
+        {
+            PlayerPrefs.SetInt("intAdCounter", counter);
+            PlayerPrefs.Save();
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
     }
 
     public void GoToMenu()
