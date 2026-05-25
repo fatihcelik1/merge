@@ -158,6 +158,30 @@ public class GridManager : MonoBehaviour
         return 1;
     }
 
+    // Grid'de ayni level olan komsu cifti bulur (tutorial icin).
+    public bool TryGetNeighborPair(out Transform a, out Transform b)
+    {
+        for (int r = 0; r < rows; r++)
+        {
+            for (int c = 0; c < cols; c++)
+            {
+                var go = grid[r, c];
+                if (go == null) continue;
+                int lv = go.GetComponent<ItemData>().level;
+                // sag komsu
+                if (c + 1 < cols && grid[r, c + 1] != null &&
+                    grid[r, c + 1].GetComponent<ItemData>().level == lv)
+                { a = go.transform; b = grid[r, c + 1].transform; return true; }
+                // alt komsu
+                if (r + 1 < rows && grid[r + 1, c] != null &&
+                    grid[r + 1, c].GetComponent<ItemData>().level == lv)
+                { a = go.transform; b = grid[r + 1, c].transform; return true; }
+            }
+        }
+        a = b = null;
+        return false;
+    }
+
     // 4 komsudan (yukari/asagi/sol/sag) herhangi biri ayni level mi?
     bool HasSameNeighbor(int r, int c, int level)
     {
@@ -249,6 +273,7 @@ public class GridManager : MonoBehaviour
             toObj.GetComponent<ItemVisual>().UpdateVisual(newLevel);
             Destroy(fromObj);
             TryShowNewFriend(newLevel, toObj.transform, 0.2f);
+            if (TutorialManager.Instance != null) TutorialManager.Instance.NotifyMergeHappened();
             if (LevelManager.Instance != null)
             LevelManager.Instance.OnMergeHappened(level1, toRt);
             else
