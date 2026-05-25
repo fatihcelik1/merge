@@ -11,10 +11,24 @@ public class AdManager : MonoBehaviour
 {
     public static AdManager Instance;
 
-    // Google'in resmi test ad unit ID'leri (asla productionda kullanma)
-    const string BannerId       = "ca-app-pub-3940256099942544/6300978111";
-    const string InterstitialId = "ca-app-pub-3940256099942544/1033173712";
-    const string RewardedId     = "ca-app-pub-3940256099942544/5224354917";
+    // === PRODUCTION TOGGLE ===
+    // true  -> Google'in test reklamlari (gelistirme - kendine tiklayabilirsin)
+    // false -> Gercek reklamlar (YAYIN ONCESI false yap)
+    const bool useTestAds = true;
+
+    // Google'in resmi test ad unit ID'leri (her app'te calisir)
+    const string TestBannerId       = "ca-app-pub-3940256099942544/6300978111";
+    const string TestInterstitialId = "ca-app-pub-3940256099942544/1033173712";
+    const string TestRewardedId     = "ca-app-pub-3940256099942544/5224354917";
+
+    // Gercek ad unit ID'leri (Merge Safari: Jungle, FCgames)
+    const string RealBannerId       = "ca-app-pub-5924651773494504/3438261718";
+    const string RealInterstitialId = "ca-app-pub-5924651773494504/4529879312";
+    const string RealRewardedId     = "ca-app-pub-5924651773494504/7809128868";
+
+    string BannerId       => useTestAds ? TestBannerId       : RealBannerId;
+    string InterstitialId => useTestAds ? TestInterstitialId : RealInterstitialId;
+    string RewardedId     => useTestAds ? TestRewardedId     : RealRewardedId;
 
     BannerView banner;
     InterstitialAd interstitial;
