@@ -47,7 +47,7 @@ public class MergeAnimator : MonoBehaviour
         // 1. FLY
         Vector2 startPos = from.anchoredPosition;
         Vector2 targetPos = to.anchoredPosition;
-        float flyDuration = 0.14f;
+        float flyDuration = 0.10f;
         float elapsed = 0f;
 
         while (elapsed < flyDuration)
@@ -65,7 +65,7 @@ public class MergeAnimator : MonoBehaviour
         from.gameObject.SetActive(false);
 
         // 2. SHAKE
-        float shakeDuration = 0.1f;
+        float shakeDuration = 0.06f;
         elapsed = 0f;
         Vector2 toStart = to.anchoredPosition;
 
@@ -86,7 +86,7 @@ public class MergeAnimator : MonoBehaviour
         bool sfxOn = SettingsManager.Instance == null || SettingsManager.Instance.soundOn;
         if (sfxOn && _audio != null && MergeClip != null) _audio.PlayOneShot(MergeClip);
 
-        float popDuration = 0.2f;
+        float popDuration = 0.13f;
         elapsed = 0f;
 
         while (elapsed < popDuration)
@@ -126,7 +126,7 @@ public class MergeAnimator : MonoBehaviour
 
         Transform parent = center.parent;
         Vector2 origin = center.anchoredPosition;
-        int count = 9;
+        int count = 6;
 
         for (int i = 0; i < count; i++)
         {
@@ -153,7 +153,7 @@ public class MergeAnimator : MonoBehaviour
     {
         Vector2 start = rt.anchoredPosition;
         float dist = Random.Range(80f, 150f);
-        float dur = Random.Range(0.45f, 0.7f);
+        float dur = Random.Range(0.35f, 0.55f);
         float spin = Random.Range(-300f, 300f);
         float t = 0f;
         Color c = img.color;
