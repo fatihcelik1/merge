@@ -12,6 +12,34 @@ public static class BuildScript
 {
     const string OutPath = @"E:\merge_build\merge.apk";
     const string AabPath = @"E:\merge_build\mergesafari.aab";
+    const string iOSPath = "ios_build";  // Codemagic icin relative path
+
+    // Codemagic CI/CD ortamindan cagrilir (Mac build agent).
+    // Output: ios_build/ klasorunde Xcode workspace
+    public static void BuildiOS()
+    {
+        string[] scenes = EditorBuildSettings.scenes
+            .Where(s => s.enabled)
+            .Select(s => s.path)
+            .ToArray();
+
+        if (scenes.Length == 0) throw new System.Exception("No enabled scenes in Build Settings");
+
+        var options = new BuildPlayerOptions
+        {
+            scenes = scenes,
+            locationPathName = iOSPath,
+            target = BuildTarget.iOS,
+            targetGroup = BuildTargetGroup.iOS,
+            options = BuildOptions.None
+        };
+
+        var report = BuildPipeline.BuildPlayer(options);
+        if (report.summary.result != BuildResult.Succeeded)
+            throw new System.Exception("iOS build failed: " + report.summary.result);
+
+        Debug.Log("[BuildScript] iOS build succeeded -> " + iOSPath);
+    }
 
     [MenuItem("Tools/APK Olustur (E: diske)")]
     public static void BuildAndroid()

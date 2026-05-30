@@ -1,0 +1,53 @@
+workflows:
+  ios-unsigned:
+    name: iOS Unsigned Build
+    max_build_duration: 90
+    instance_type: mac_mini_m2
+    environment:
+      groups:
+        - unity_credentials  # Codemagic UI'da: UNITY_USERNAME, UNITY_PASSWORD, UNITY_SERIAL
+      vars:
+        UNITY_VERSION: 6000.4.0f1
+        UNITY_BIN: /Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity
+        XCODE_PROJECT: ios_build
+    scripts:
+      - name: Install Unity 6000.4.0f1 if missing
+        script: |
+          if [ ! -d "/Applications/Unity/Hub/Editor/$UNITY_VERSION" ]; then
+            echo "Installing Unity $UNITY_VERSION..."
+            /Applications/Unity\ Hub.app/Contents/MacOS/Unity\ Hub -- --headless install --version $UNITY_VERSION --childModules ios
+          else
+            echo "Unity $UNITY_VERSION already installed"
+          fi
+      - name: Activate Unity License
+        script: |
+          $UNITY_BIN -batchmode -nographics -quit \
+            -username "$UNITY_USERNAME" \
+            -password "$UNITY_PASSWORD" \
+            -serial "$UNITY_SERIAL" \
+            -logFile -
+      - name: Build Unity iOS Xcode Project
+        script: |
+          $UNITY_BIN -batchmode -nographics -quit \
+            -projectPath . \
+            -buildTarget iOS \
+            -executeMethod BuildScript.BuildiOS \
+            -logFile -
+      - name: Return Unity License
+        script: |
+          $UNITY_BIN -batchmode -nographics -quit -returnlicense -logFile -
+      - name: Archive Xcode project (unsigned)
+        script: |
+          cd $XCODE_PROJECT
+          xcodebuild archive \
+            -workspace Unity-iPhone.xcworkspace \
+            -scheme Unity-iPhone \
+            -configuration Release \
+            -archivePath build/Unity-iPhone.xcarchive \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGN_IDENTITY="" \
+            PROVISIONING_PROFILE=""
+    artifacts:
+      - ios_build/build/**/*.xcarchive
+      - ios_build/**/*.log
