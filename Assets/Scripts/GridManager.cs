@@ -67,13 +67,15 @@ public class GridManager : MonoBehaviour
         _isInitialSpawn = true;
 
         int totalSlots = rows * cols;
-        int fillCount = totalSlots;
+        int maxLvl = (LevelManager.Instance != null)
+            ? LevelManager.Instance.GetSpawnMaxLevel(LevelManager.Instance.currentLevel)
+            : 8;
 
+        // Slot listesi - random sirayla spawn icin
         List<int[]> allSlots = new List<int[]>();
         for (int r = 0; r < rows; r++)
             for (int c = 0; c < cols; c++)
                 allSlots.Add(new int[] { r, c });
-
         for (int i = 0; i < allSlots.Count; i++)
         {
             int rand = Random.Range(i, allSlots.Count);
@@ -82,18 +84,74 @@ public class GridManager : MonoBehaviour
             allSlots[rand] = temp;
         }
 
-        for (int i = 0; i < fillCount; i++)
+        // 1) LEVELLERI ÖNCEDEN PLANLA (görsel yok, sadece 2D array)
+        int[,] plannedLevels = new int[rows, cols];
+        // 0 = bos/atanmamis isareti olarak kullanma, var sayilan tum hucreler -1
+        for (int r = 0; r < rows; r++)
+            for (int c = 0; c < cols; c++)
+                plannedLevels[r, c] = -1;
+
+        foreach (var slot in allSlots)
         {
-            int r = allSlots[i][0];
-            int c = allSlots[i][1];
-            SpawnItemAt(r, c);
-            yield return new WaitForSeconds(0.03f);
+            int r = slot[0], c = slot[1];
+            int level = RollWeightedLevel(maxLvl);
+            for (int t = 0; t < 5 && PlannedHasSameNeighbor(plannedLevels, r, c, level); t++)
+                level = RollWeightedLevel(maxLvl);
+            plannedLevels[r, c] = level;
+        }
+
+        // 2) DEADLOCK KONTROLU - planlama duzeyinde duzelt (henuz hicbir sey spawn edilmedi)
+        if (!PlannedHasAnyMergeablePair(plannedLevels))
+        {
+            // En basit fix: iki komsuyu esit yap. Merkeze yakin bir konum sec
+            int mr = rows / 2;
+            int mc = cols / 2;
+            if (mc + 1 < cols)
+                plannedLevels[mr, mc + 1] = plannedLevels[mr, mc];
+            else if (mc > 0)
+                plannedLevels[mr, mc - 1] = plannedLevels[mr, mc];
+            else if (mr + 1 < rows)
+                plannedLevels[mr + 1, mc] = plannedLevels[mr, mc];
+        }
+
+        // 3) SPAWN ET (görsel başlasın, oyuncu artık tutarli grid görür)
+        foreach (var slot in allSlots)
+        {
+            int r = slot[0], c = slot[1];
+            SpawnItemAt(r, c, plannedLevels[r, c]);
+            yield return new WaitForSeconds(0.02f);
         }
 
         _isInitialSpawn = false;
     }
 
-    void SpawnItemAt(int r, int c)
+    // Planlama 2D dizisi icin: hucrenin komsulari ayni level mi?
+    bool PlannedHasSameNeighbor(int[,] planned, int r, int c, int level)
+    {
+        if (r > 0 && planned[r - 1, c] == level) return true;
+        if (r < rows - 1 && planned[r + 1, c] == level) return true;
+        if (c > 0 && planned[r, c - 1] == level) return true;
+        if (c < cols - 1 && planned[r, c + 1] == level) return true;
+        return false;
+    }
+
+    // Planlama 2D dizisinde en az bir komsu cift (merge yapilabilir) var mi?
+    bool PlannedHasAnyMergeablePair(int[,] planned)
+    {
+        for (int r = 0; r < rows; r++)
+        {
+            for (int c = 0; c < cols; c++)
+            {
+                int lv = planned[r, c];
+                if (lv < 1) continue;
+                if (c + 1 < cols && planned[r, c + 1] == lv) return true;
+                if (r + 1 < rows && planned[r + 1, c] == lv) return true;
+            }
+        }
+        return false;
+    }
+
+    void SpawnItemAt(int r, int c, int forcedLevel = -1)
     {
         GameObject newItem = Instantiate(itemPrefab, gridParent);
         RectTransform itemRt = newItem.GetComponent<RectTransform>();
@@ -101,14 +159,20 @@ public class GridManager : MonoBehaviour
         itemRt.anchoredPosition = new Vector2(targetPos.x, targetPos.y + 800f);
         itemRt.sizeDelta = new Vector2(cellSize, cellSize) * itemScale;
 
-        int maxLvl = (LevelManager.Instance != null)
-            ? LevelManager.Instance.GetSpawnMaxLevel(LevelManager.Instance.currentLevel)
-            : 8;
-
-        // Agirlikli random + komsu tekrarini azaltmak icin 5 deneme
-        int randomLevel = RollWeightedLevel(maxLvl);
-        for (int t = 0; t < 5 && HasSameNeighbor(r, c, randomLevel); t++)
+        int randomLevel;
+        if (forcedLevel > 0)
+        {
+            randomLevel = forcedLevel;
+        }
+        else
+        {
+            int maxLvl = (LevelManager.Instance != null)
+                ? LevelManager.Instance.GetSpawnMaxLevel(LevelManager.Instance.currentLevel)
+                : 8;
             randomLevel = RollWeightedLevel(maxLvl);
+            for (int t = 0; t < 5 && HasSameNeighbor(r, c, randomLevel); t++)
+                randomLevel = RollWeightedLevel(maxLvl);
+        }
 
         newItem.GetComponent<ItemData>().level = randomLevel;
         newItem.GetComponent<ItemVisual>().UpdateVisual(randomLevel);
@@ -202,7 +266,7 @@ public class GridManager : MonoBehaviour
 
     IEnumerator DropAnimation(RectTransform rt, Vector2 targetPos)
     {
-        float duration = 0.17f;
+        float duration = 0.13f;
         float elapsed = 0f;
         Vector2 startPos = rt.anchoredPosition;
 
@@ -281,6 +345,7 @@ public class GridManager : MonoBehaviour
             ApplyGravity(fromC);
         });
     }
+
 
     public void ApplyGravity(int col)
     {

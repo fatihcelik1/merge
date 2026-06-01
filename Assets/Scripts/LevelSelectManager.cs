@@ -18,6 +18,9 @@ public class LevelSelectManager : MonoBehaviour
 
     void OnEnable()
     {
+        // Panel acildiginda Canvas hiyerarsisinde en uste cikar
+        // Karartma overlay (raycastTarget=true) bu sekilde arkadaki butonlarin (Collection vb.) tiklamalarini engeller
+        transform.SetAsLastSibling();
         if (content == null) return;
         BuildButtons();
     }
